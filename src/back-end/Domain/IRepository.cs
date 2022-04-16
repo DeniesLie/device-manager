@@ -4,11 +4,11 @@ namespace Domain;
 
 public interface IRepository<TEntity> where TEntity : IEntity
 {
-    IQueryable<TEntity> GetAll();
+    IQueryable<TEntity> Query(params Expression<Func<TEntity, object>>[] includes);
 
-    Task<TEntity> FindByIdAsync(params object[] keys);
+    Task<TEntity?> FindByIdAsync(params object[] keys);
 
-    Task<TEntity> FindByCondition(Expression<Func<TEntity, bool>> predicate);
+    Task<TEntity?> FindByCondition(Expression<Func<TEntity, bool>> predicate);
 
     void Add(TEntity entity);
 
@@ -19,8 +19,6 @@ public interface IRepository<TEntity> where TEntity : IEntity
     void RemoveRange(IEnumerable<TEntity> entities);
 
     void Update(TEntity entity);
-
-    Task Update(TEntity entity, IEnumerable<string> fieldMask);
-
+    
     Task<int> SaveChangesAsync();
 }
