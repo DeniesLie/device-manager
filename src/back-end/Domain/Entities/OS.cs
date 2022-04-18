@@ -8,5 +8,5 @@ public class OS : IEntity
     public OSType OSType { get; set; }
     public string? OSVersion { get; set; }
 
-    public IEnumerable<Device>? Devices { get; set; }
+    public List<Device> Devices { get; set; } = new();
 }
