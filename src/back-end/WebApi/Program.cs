@@ -11,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext(builder.Configuration, builder.Environment);
 builder.Services.AddRepositories();
+builder.Services.AddMapper();
 
 var app = builder.Build();
 
