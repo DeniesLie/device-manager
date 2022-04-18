@@ -1,7 +1,9 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
 using Domain;
 using Domain.Entities;
+using Application;
 
 namespace WebApi.ServiceExtension;
 
@@ -11,7 +13,7 @@ public static class ServiceExtension
     {
         string connectionString;
         if (env.IsDevelopment())
-            connectionString = config.GetConnectionString("DevLocaldbConnection");
+            connectionString = config.GetConnectionString("DevDockerConnection");
         else
             connectionString = config.GetConnectionString("AzureConnection");
         
@@ -25,7 +27,20 @@ public static class ServiceExtension
         services.AddScoped<IRepository<OS>, Repository<OS>>();
         services.AddScoped<IRepository<Project>, Repository<Project>>();
         services.AddScoped<IRepository<User>, Repository<User>>();
-        services.AddScoped<IRepository<UserInProject>, Repository<UserInProject>>();
+        services.AddScoped<IRepository<ProjectMembership>, Repository<ProjectMembership>>();
     }
 
+    public static void AddMapper(this IServiceCollection services)
+    {
+        var mapConfig = new MapperConfiguration(config =>
+        {
+            config.AddProfile(new Application.MapperProfiles.DeviceProfile());
+            config.AddProfile(new Application.MapperProfiles.OSProfile());
+            config.AddProfile(new Application.MapperProfiles.ProjectMembershipProfile());
+            config.AddProfile(new Application.MapperProfiles.ProjectProfile());
+            config.AddProfile(new Application.MapperProfiles.UserProfile());
+        });
+        IMapper mapper = mapConfig.CreateMapper();
+        services.AddSingleton<IMapper>(mapper);
+    }
 }
