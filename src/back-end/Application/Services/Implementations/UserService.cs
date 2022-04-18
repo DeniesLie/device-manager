@@ -11,13 +11,11 @@ public class UserService : IUserService
 {
     private readonly IRepository<User> _userRepo;
     private readonly IMapper _mapper;
-    private readonly ILogger<UserService> _logger;
     
     public UserService(IRepository<User> userRepo, IMapper mapper, ILogger<UserService> logger)
     {
         _userRepo = userRepo;
         _mapper = mapper;
-        _logger = logger;
     }
 
     public async Task<UserDto?> GetUserById(string userId)
@@ -28,8 +26,9 @@ public class UserService : IUserService
         var user = _mapper.Map<User>(userDto);
         _userRepo.Add(user);
         await _userRepo.SaveChangesAsync();
-        _logger.LogInformation("User {0} has joined the service", user.UserName);
         return _mapper.Map<UserDto>(user);
     }
-
+    
+    public async Task<bool> UserExistsAsync(string userId)
+        => await _userRepo.Exists(userId);
 }

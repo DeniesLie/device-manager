@@ -1,4 +1,5 @@
 using Application.Dto;
+using Application.Exceptions;
 using Domain.Entities;
 using Domain;
 using Application.Services.Interfaces;
@@ -32,6 +33,9 @@ public class ProjectService : IProjectService
 
     public async Task<IEnumerable<ProjectGetDto>> GetUserProjectsAsync(string userId)
     {
+        if(!await _userService.UserExistsAsync(userId))
+            throw new UnknownUserException();
+        
         return _mapper.Map<IEnumerable<ProjectGetDto>>(
             await _membersRepo.Query(m => m.Project)
                 .Where(m => m.UserId == userId)
@@ -41,6 +45,9 @@ public class ProjectService : IProjectService
 
     public async Task<IEnumerable<UserDto>> GetUsersInProjectAsync(Guid projectId)
     {
+        if (!await ProjectExistsAsync(projectId))
+            throw new NotFoundException($"Project {projectId} does not exist");
+        
         return _mapper.Map<IEnumerable<UserDto>>(
             await _membersRepo.Query(m => m.User)
                 .Where(m => m.ProjectId == projectId)
@@ -48,16 +55,11 @@ public class ProjectService : IProjectService
                 .ToListAsync());
     }
 
-    // public async Task<IEnumerable<DeviceGetDto>> GetDevicesInProjectAsync(Guid projectId)
-    // {
-    //     return _mapper.Map<IEnumerable<DeviceGetDto>>(
-    //         await _deviceRepo.Query()
-    //             .Where(d => d.ProjectId == projectId)
-    //             .ToListAsync());
-    // }
-
     public async Task<ProjectGetDto> AddProjectAsync(ProjectPostDto projectPostDto, string projAdminId)
     {
+        if (!await _userService.UserExistsAsync(projAdminId))
+            throw new UnknownUserException();
+        
         var projAdmin = _userService.GetUserById(projAdminId);
         var project = _mapper.Map<Project>(projectPostDto);
         project.Id = new Guid();
@@ -74,6 +76,11 @@ public class ProjectService : IProjectService
 
     public async Task<ProjectGetDto> UpdateProjectAsync(ProjectPutDto projectDto)
     {
+        if (projectDto == null)
+            throw new NullReferenceException();
+        if (!await ProjectExistsAsync(projectDto.Id))
+            throw new NotFoundException();
+            
         var updateProj = _mapper.Map<Project>(projectDto);
         _projectRepo.Update(updateProj);
         await _projectRepo.SaveChangesAsync();
@@ -82,9 +89,7 @@ public class ProjectService : IProjectService
 
     public async Task<bool> AddContributorToProjectAsync(Guid projectId, string userId)
     {
-        var project = await _projectRepo.FindByIdAsync(projectId);
-        var user = await _userService.GetUserById(userId);
-        if (project == null || user == null)
+        if (!await ProjectExistsAsync(projectId) || !await _userService.UserExistsAsync(userId))
             return false;
 
         var newMembership = new ProjectMembership()
@@ -100,11 +105,9 @@ public class ProjectService : IProjectService
 
     public async Task<bool> KickContributorFromProjectAsync(Guid projectId, string userId)
     {
-        var project = await _projectRepo.FindByIdAsync(projectId);
-        var user = await _userService.GetUserById(userId);
-        if (project == null || user == null)
+        if (!await ProjectExistsAsync(projectId) || !await _userService.UserExistsAsync(userId))
             return false;
-
+        
         var membership = await _membersRepo.FindByIdAsync(projectId, userId);
         if (membership == null)
             return false;
@@ -113,4 +116,7 @@ public class ProjectService : IProjectService
         await _membersRepo.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> ProjectExistsAsync(Guid projectId)
+        => await _projectRepo.Exists(projectId);
 }

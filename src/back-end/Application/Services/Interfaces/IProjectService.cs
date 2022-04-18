@@ -12,4 +12,5 @@ public interface IProjectService
     Task<ProjectGetDto> UpdateProjectAsync(ProjectPutDto projectDto);
     Task<bool> AddContributorToProjectAsync(Guid projectId, string userId);
     Task<bool> KickContributorFromProjectAsync(Guid projectId, string userId);
+    Task<bool> ProjectExistsAsync(Guid projectId);
 }
