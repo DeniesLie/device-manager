@@ -29,6 +29,9 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, I
     public async Task<TEntity?> FindByIdAsync(params object[] keys)
         => await _entities.FindAsync(keys);
 
+    public async Task<bool> Exists(params object[] keys)
+        => await FindByIdAsync(keys) != null;
+    
     public async Task<TEntity?> FindByCondition(Expression<Func<TEntity, bool>> predicate)
         => await _entities.FirstOrDefaultAsync(predicate);
 

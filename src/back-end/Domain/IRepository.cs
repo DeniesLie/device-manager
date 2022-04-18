@@ -7,7 +7,7 @@ public interface IRepository<TEntity> where TEntity : IEntity
     IQueryable<TEntity> Query(params Expression<Func<TEntity, object>>[] includes);
 
     Task<TEntity?> FindByIdAsync(params object[] keys);
-
+    Task<bool> Exists(params object[] keys);
     Task<TEntity?> FindByCondition(Expression<Func<TEntity, bool>> predicate);
 
     void Add(TEntity entity);
