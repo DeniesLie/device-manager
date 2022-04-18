@@ -52,6 +52,7 @@ public class DeviceService : IDeviceService
     {
         if (deviceDto == null)
             throw new NullReferenceException();
+        
         var device = _mapper.Map<Device>(deviceDto);
         _deviceRepo.Update(device);
         await _deviceRepo.SaveChangesAsync();
@@ -75,4 +76,7 @@ public class DeviceService : IDeviceService
         await _deviceRepo.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> DeviceExistsAsync(Guid deviceId)
+        => await _deviceRepo.Exists(deviceId);
 }

@@ -10,4 +10,5 @@ public interface IDeviceService
     Task<DeviceGetDto> UpdateDeviceAsync(DevicePutDto deviceDto);
     Task<bool> RemoveDeviceAsync(Guid deviceId);
     Task<bool> RemoveDeviceRangeAsync(IEnumerable<Guid> deviceIds);
+    Task<bool> DeviceExistsAsync(Guid deviceId);
 }

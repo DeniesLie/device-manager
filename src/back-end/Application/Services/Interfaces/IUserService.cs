@@ -8,4 +8,5 @@ public interface IUserService
 {
     Task<UserDto?> GetUserById(string userId);
     Task<UserDto> AddUserAsync(UserDto userDto);
+    Task<bool> UserExistsAsync(string userId);
 }
