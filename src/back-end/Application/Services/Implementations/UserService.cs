@@ -12,13 +12,13 @@ public class UserService : IUserService
     private readonly IRepository<User> _userRepo;
     private readonly IMapper _mapper;
     
-    public UserService(IRepository<User> userRepo, IMapper mapper, ILogger<UserService> logger)
+    public UserService(IRepository<User> userRepo, IMapper mapper)
     {
         _userRepo = userRepo;
         _mapper = mapper;
     }
 
-    public async Task<UserDto?> GetUserById(string userId)
+    public async Task<UserDto?> GetUserByIdAsync(string userId)
         => _mapper.Map<UserDto?>(await _userRepo.FindByIdAsync(userId));
 
     public async Task<UserDto> AddUserAsync(UserDto userDto)
