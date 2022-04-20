@@ -4,7 +4,7 @@ namespace Application.Services.Interfaces;
 
 public interface IDeviceService
 {
-    Task<DeviceGetDto> GetDeviceById(Guid deviceId);
+    Task<DeviceGetDto> GetDeviceByIdAsync(Guid deviceId);
     Task<IEnumerable<DeviceGetDto>> GetDevicesInProjectAsync(Guid projectId);
     Task<DeviceGetDto> AddDeviceToProjectAsync(DevicePostDto deviceDto);
     Task<DeviceGetDto> UpdateDeviceAsync(DevicePutDto deviceDto);

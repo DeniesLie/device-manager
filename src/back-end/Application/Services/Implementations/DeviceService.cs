@@ -21,7 +21,7 @@ public class DeviceService : IDeviceService
         _mapper = mapper;
     }
     
-    public async Task<DeviceGetDto> GetDeviceById(Guid deviceId)
+    public async Task<DeviceGetDto> GetDeviceByIdAsync(Guid deviceId)
         => _mapper.Map<DeviceGetDto>(await _deviceRepo.FindByIdAsync(deviceId));
 
     public async Task<IEnumerable<DeviceGetDto>> GetDevicesInProjectAsync(Guid projectId)

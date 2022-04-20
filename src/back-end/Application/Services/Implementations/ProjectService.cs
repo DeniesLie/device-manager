@@ -60,7 +60,6 @@ public class ProjectService : IProjectService
         if (!await _userService.UserExistsAsync(projAdminId))
             throw new UnknownUserException();
         
-        var projAdmin = _userService.GetUserById(projAdminId);
         var project = _mapper.Map<Project>(projectPostDto);
         project.Id = new Guid();
         project.Memberships.Add(
